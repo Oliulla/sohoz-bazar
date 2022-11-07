@@ -2,10 +2,29 @@ import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import BrandImg from "../assets/images/brand-img.jpg";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
+import {
+  Bars3Icon,
+  XMarkIcon,
+  ShoppingCartIcon,
+} from "@heroicons/react/24/solid";
+import { useContext } from "react";
+import { AuthContext } from "../AuthProvider/AuthProvider";
 
 const NavBar = () => {
   const [open, setOpen] = useState(true);
+  const { user, logOut } = useContext(AuthContext);
+  console.log(user?.uid);
+
+  const handleLogOut = () => {
+    logOut()
+      .then(() => {
+        return alert('Successfully logged Out')
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+
 
   return (
     <nav className="bg-[#1D2A35] px-4 py-4 md:px-14 w-full flex justify-between items-center z-50 sticky top-0">
@@ -25,10 +44,27 @@ const NavBar = () => {
         <Link className="hover:text-yellow-600" to="/home">
           Home
         </Link>
-        <Link className="hover:text-yellow-600">All Products</Link>
-        <Link className="hover:text-yellow-600">Profile</Link>
-        <Link className="hover:text-yellow-600" to='/register'>Register</Link>
-        <Link className="hover:text-yellow-600" to='/login'>Login</Link>
+        <Link className="hover:text-yellow-600 relative">
+          <ShoppingCartIcon className="h-6 w-6 text-white" />
+          <span className="absolute top-[-15px] right-[-12px] text-xl text-yellow-500 font-semibold">
+            10
+          </span>
+        </Link>
+        <Link className="hover:text-yellow-600">
+          {user?.displayName ? user.displayName : "Anonymous"}
+        </Link>
+        {user?.uid ? (
+          <button onClick={handleLogOut} className="hover:text-yellow-600">Log Out</button>
+        ) : (
+          <>
+            <Link className="hover:text-yellow-600" to="/register">
+              Register
+            </Link>
+            <Link className="hover:text-yellow-600" to="/login">
+              Login
+            </Link>
+          </>
+        )}
       </div>
       <div
         className="h-8 w-8 block md:hidden text-blue-800"
